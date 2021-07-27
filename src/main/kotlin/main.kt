@@ -2,8 +2,8 @@ import kotlin.math.round
 
 fun calculationAlgorithm (
     currentTransferAmount: Int,
-    accountCardType: String = "Visa",
-    previousAmountOfTransfersThisMonth: Int = 2_000_00
+    accountCardType: String = "Vk Pay",
+    previousAmountOfTransfersThisMonth: Int = 0
 ): Int {
 
     val startCommissionAmount = round(((currentTransferAmount * cardCommissionSize(accountCardType,
