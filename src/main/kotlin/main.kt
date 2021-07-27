@@ -1,14 +1,15 @@
 import kotlin.math.round
 
 fun calculationAlgorithm (
-    accountCardType: String = "VK Pay",
-    previousAmountOfTransfersThisMonth: Int = 0,
-    currentTransferAmount: Int
+    currentTransferAmount: Int,
+    accountCardType: String = "Visa",
+    previousAmountOfTransfersThisMonth: Int = 2_000_00
 ): Int {
 
     val startCommissionAmount = round(((currentTransferAmount * cardCommissionSize(accountCardType,
         currentTransferAmount))/100)).toInt()
-    return when (accountCardType) {
+
+    val commissionAmount = when (accountCardType) {
         "Mastercard", "Maestro" -> if (currentTransferAmount < 7_500_000) startCommissionAmount
             else startCommissionAmount + 2_000
         "Visa", "Мир" -> if (currentTransferAmount >= (100 * 3_500 / 0.75)) startCommissionAmount
@@ -18,32 +19,18 @@ fun calculationAlgorithm (
         }
     }
 
-    //return currentTransferAmount * cardCommissionSize(accountCardType, currentTransferAmount).toInt()
-
-
-}
-
-
-fun isNoLimitsVkPay(currentTransferAmount: Int, previousAmountOfTransfersThisMonth: Int): Boolean {
     return when {
-            (currentTransferAmount < 1_500_000 && previousAmountOfTransfersThisMonth < 4_000_000) -> true
-        else -> false
-
+        isNoLimitsCards(currentTransferAmount, previousAmountOfTransfersThisMonth) -> commissionAmount
+        isNoLimitsVkPay(currentTransferAmount, previousAmountOfTransfersThisMonth) -> commissionAmount
+         else -> {
+             0
+         }
     }
-
-}
-
-fun isNoLimitsCards(currentTransferAmount: Int, previousAmountOfTransfersThisMonth: Int): Boolean {
-    return when {
-        (currentTransferAmount > 15_000_000 || previousAmountOfTransfersThisMonth > 60_000_000) -> true
-        else -> false
-    }
-
-}
+ }
 
 fun cardCommissionSize(accountCardType: String, currentTransferAmount: Int): Double {
     return when (accountCardType) {
-        "Mastercard", "Maestro" -> if (currentTransferAmount < 7_500_000) 0.00 else 0.6
+        "Mastercard", "Maestro" -> if (currentTransferAmount < 75_000_00) 0.00 else 0.6
         "Visa", "Мир" -> 0.75
         else -> {
             0.0
@@ -51,28 +38,24 @@ fun cardCommissionSize(accountCardType: String, currentTransferAmount: Int): Dou
     }
 }
 
+fun isNoLimitsVkPay(currentTransferAmount: Int, previousAmountOfTransfersThisMonth: Int): Boolean {
+    return when {
+            (currentTransferAmount < 15_000_00 || previousAmountOfTransfersThisMonth < 40_000_000) -> true
+        else -> false
+    }
+}
 
-fun convertToRub(currentTransferAmount: Int): Int {
-    return round(currentTransferAmount / 100.00).toInt()
-
+fun isNoLimitsCards(currentTransferAmount: Int, previousAmountOfTransfersThisMonth: Int): Boolean {
+    return when {
+        (currentTransferAmount > 150_000_00 || previousAmountOfTransfersThisMonth > 600_000_00) -> true
+        else -> false
+    }
 }
 
 fun main() {
-    val accountCardType = "Visa"
-    val previousAmountOfTransfersThisMonth = 0
-    val currentTransferAmount = 467000
-    val d = println("Коммиссия за перевод ${convertToRub(currentTransferAmount)} руб. ${currentTransferAmount % 100} коп. " +
-            "равна ${calculationAlgorithm(accountCardType, previousAmountOfTransfersThisMonth, currentTransferAmount)
-                    / 100} руб. ${calculationAlgorithm(accountCardType, previousAmountOfTransfersThisMonth,
-                currentTransferAmount) % 100} коп.")
+    val currentTransferAmount = 15_000_00
 
-
-    when  {
-        isNoLimitsCards(currentTransferAmount, previousAmountOfTransfersThisMonth) -> d
-        isNoLimitsVkPay(currentTransferAmount, previousAmountOfTransfersThisMonth) -> d
-
-
-    }
-
+    println("Коммиссия равна ${calculationAlgorithm(currentTransferAmount) / 100} руб." +
+                "${calculationAlgorithm(currentTransferAmount) % 100} коп.")
 }
 
