@@ -2,7 +2,7 @@ import kotlin.math.round
 
 fun calculationAlgorithm (
     currentTransferAmount: Int,
-    accountCardType: String = "Vk Pay",
+    accountCardType: String = "VK Pay",
     previousAmountOfTransfersThisMonth: Int = 0
 ): Int {
 
@@ -11,20 +11,19 @@ fun calculationAlgorithm (
 
     val commissionAmount = when (accountCardType) {
         "Mastercard", "Maestro" -> if (currentTransferAmount < 7_500_000) startCommissionAmount
-            else startCommissionAmount + 2_000
-        "Visa", "Мир" -> if (currentTransferAmount >= (100 * 3_500 / 0.75)) startCommissionAmount
-            else 3_500
+            else startCommissionAmount + 20_00
+        "Visa", "Мир" -> if (currentTransferAmount >= (100 * 35_00 / 0.75)) startCommissionAmount
+            else 35_00
         else -> {
             startCommissionAmount
         }
     }
 
     return when {
-        isNoLimitsCards(currentTransferAmount, previousAmountOfTransfersThisMonth) -> commissionAmount
-        isNoLimitsVkPay(currentTransferAmount, previousAmountOfTransfersThisMonth) -> commissionAmount
-         else -> {
+        isNoLimits(currentTransferAmount, previousAmountOfTransfersThisMonth) -> commissionAmount
+        else -> {
              0
-         }
+        }
     }
  }
 
@@ -38,22 +37,16 @@ fun cardCommissionSize(accountCardType: String, currentTransferAmount: Int): Dou
     }
 }
 
-fun isNoLimitsVkPay(currentTransferAmount: Int, previousAmountOfTransfersThisMonth: Int): Boolean {
+fun isNoLimits(currentTransferAmount: Int, previousAmountOfTransfersThisMonth: Int): Boolean {
     return when {
             (currentTransferAmount < 15_000_00 || previousAmountOfTransfersThisMonth < 40_000_000) -> true
-        else -> false
-    }
-}
-
-fun isNoLimitsCards(currentTransferAmount: Int, previousAmountOfTransfersThisMonth: Int): Boolean {
-    return when {
-        (currentTransferAmount > 150_000_00 || previousAmountOfTransfersThisMonth > 600_000_00) -> true
+            (currentTransferAmount > 150_000_00 || previousAmountOfTransfersThisMonth > 600_000_00) -> true
         else -> false
     }
 }
 
 fun main() {
-    val currentTransferAmount = 15_000_00
+    val currentTransferAmount = 76_459_00
 
     println("Коммиссия равна ${calculationAlgorithm(currentTransferAmount) / 100} руб." +
                 "${calculationAlgorithm(currentTransferAmount) % 100} коп.")
