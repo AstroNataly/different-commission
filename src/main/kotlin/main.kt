@@ -40,7 +40,7 @@ fun cardCommissionSize(accountCardType: String, currentTransferAmount: Int): Dou
 fun isNoLimits(currentTransferAmount: Int, previousAmountOfTransfersThisMonth: Int): Boolean {
     return when {
             (currentTransferAmount < 15_000_00 && previousAmountOfTransfersThisMonth < 40_000_000) -> true
-            (currentTransferAmount > 150_000_00 && previousAmountOfTransfersThisMonth > 600_000_00) -> true
+            (currentTransferAmount < 150_000_00 && previousAmountOfTransfersThisMonth < 600_000_00) -> true
         else -> false
     }
 }
